@@ -31,7 +31,7 @@ jobs:
 
     - name: Pre-install Android Build Tools and AIDL
       run: |
-        # On force l'installation de la version requise par Buildozer pour éviter le bug
+        # On force l'installation de la version stable requise avant le démarrage de Buildozer
         sdkmanager "build-tools;34.0.0" "platforms;android-34" "platform-tools"
 
     - name: Build APK with Buildozer
