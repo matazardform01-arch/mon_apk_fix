@@ -17,23 +17,22 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install System Dependencies
+    - name: Install System Dependencies & AIDL
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake
+        # On installe explicitement le paquet 'aidl' d'Ubuntu pour corriger la ligne 948
+        sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake aidl
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Setup Android SDK (Automated & Licensed)
-      uses: android-actions/setup-android@v3
-      with:
-        log-accepted-android-sdk-licenses: false
-
-    - name: Pre-install Android Build Tools and AIDL
-      run: |
-        # On force l'installation de la version stable requise avant le démarrage de Buildozer
-        sdkmanager "build-tools;34.0.0" "platforms;android-34" "platform-tools"
-
     - name: Build APK with Buildozer
       run: |
+        # Création préventive du dossier où Buildozer cherche 'aidl' pour court-circuiter l'erreur
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/
+        # On crée un lien symbolique de l'outil 'aidl' du système vers le dossier de Buildozer
+        ln -s /usr/bin/aidl $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
+        
+        # Lancement de la compilation
         buildozer android debug
+      env:
+        AUTO_ACCEPT_LICENSE: "1"
