@@ -24,14 +24,11 @@ jobs:
         pip install --upgrade pip
         pip install buildozer cython
 
-    - name: Accept Android SDK Licenses
-      run: |
-        mkdir -p ~/.android
-        touch ~/.android/repositories.cfg
-        # Télécharge et utilise l'outil officiel pour accepter toutes les licences à l'avance
-        yes | sdkmanager --licenses || true
-
     - name: Build APK with Buildozer
       run: |
-        # On utilise "yes" pour valider automatiquement toute demande interactive de Buildozer
-        yes | buildozer android debug
+        # On force Buildozer à utiliser une version stable du NDK et à accepter les licences
+        export ANDROID_NDK_HOME=$HOME/.buildozer/android/platform/android-ndk-r25b
+        buildozer android debug
+      env:
+        # Variable officielle pour valider les outils récents sans passer par la commande "yes"
+        AUTO_ACCEPT_LICENSE: "1"
