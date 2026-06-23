@@ -26,14 +26,8 @@ jobs:
 
     - name: Build APK with Buildozer
       run: |
-        # Création de l'arborescence attendue par Buildozer
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/
-        
-        # On crée un script vide nommé 'aidl' qui renvoie succès (0) immédiatement
-        echo -e '#!/bin/sh\nexit 0' > $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
-        chmod +x $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
-        
-        # Lancement de la compilation
         buildozer android debug
       env:
+        # On dit à Buildozer d'accepter les licences sans poser de questions
+        ANDROIDSDK: "1"
         AUTO_ACCEPT_LICENSE: "1"
