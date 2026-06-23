@@ -17,22 +17,21 @@ jobs:
       with:
         python-version: '3.10'
 
-    - name: Install System Dependencies & AIDL
+    - name: Install System Dependencies
       run: |
         sudo apt-get update
-        # On installe explicitement le paquet 'aidl' d'Ubuntu pour corriger la ligne 948
-        sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake aidl
+        sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libssl-dev cmake
         pip install --upgrade pip
         pip install buildozer cython
 
     - name: Build APK with Buildozer
       run: |
-        # Création préventive du dossier où Buildozer cherche 'aidl' pour court-circuiter l'erreur
-        mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/
-        # On crée un lien symbolique de l'outil 'aidl' du système vers le dossier de Buildozer
-        ln -s /usr/bin/aidl $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
+        # Nettoyage préventif pour éviter l'erreur de dossier manquant ou corrompu
+        rm -rf $HOME/.buildozer
         
-        # Lancement de la compilation
+        # Lancement de la compilation propre
         buildozer android debug
       env:
+        # Configuration absolue pour accepter automatiquement toutes les licences Android en tâche de fond
         AUTO_ACCEPT_LICENSE: "1"
+        GRADLE_OPTS: "-Dorg.gradle.welcome.provider.enabled=false"
