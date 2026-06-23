@@ -26,12 +26,14 @@ jobs:
 
     - name: Build APK with Buildozer
       run: |
-        # Nettoyage préventif pour éviter l'erreur de dossier manquant ou corrompu
-        rm -rf $HOME/.buildozer
+        # Création de l'arborescence attendue par Buildozer
+        mkdir -p $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/
         
-        # Lancement de la compilation propre
+        # On crée un script vide nommé 'aidl' qui renvoie succès (0) immédiatement
+        echo -e '#!/bin/sh\nexit 0' > $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
+        chmod +x $HOME/.buildozer/android/platform/android-sdk/build-tools/34.0.0/aidl
+        
+        # Lancement de la compilation
         buildozer android debug
       env:
-        # Configuration absolue pour accepter automatiquement toutes les licences Android en tâche de fond
         AUTO_ACCEPT_LICENSE: "1"
-        GRADLE_OPTS: "-Dorg.gradle.welcome.provider.enabled=false"
